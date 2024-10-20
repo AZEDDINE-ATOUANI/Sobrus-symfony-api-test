@@ -1,29 +1,39 @@
 security:
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    # Password hashers configuration
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+
+    # User provider
     providers:
         users_in_memory: { memory: null }
+        app_user_provider:  # Add your user provider
+            entity:
+                class: App\Entity\User  # Adjust this to your User entity
+                property: email
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        # Firewall for the API
+        api:
+            pattern: ^/api  # Protect routes starting with /api
+            stateless: true  # No session is used for API
+            provider: app_user_provider  # Use the app user provider
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator  # JWT authenticator
+
+        # Main firewall for web
         main:
             lazy: true
             provider: users_in_memory
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
+    # Access control rules
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }  # Allow anonymous access for login
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }  # Protect all other API routes
 
 when@test:
     security:
