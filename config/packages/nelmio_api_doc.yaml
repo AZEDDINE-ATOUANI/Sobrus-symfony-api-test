@@ -4,9 +4,3 @@ nelmio_api_doc:
             title: 'API Documentation'
             description: 'API for managing blog articles'
             version: '1.0.0'
-    routes:
-        path: /api/doc
-        host: ~
-        schemes: [http, https]
-        defaults: { _format: json }
-

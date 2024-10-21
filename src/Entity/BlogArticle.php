@@ -11,7 +11,11 @@ class BlogArticle
 {
 
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
-    private $authorId;
+    private int $id; // Added ID field as primary key
+
+    #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: "Author ID is required.")]
+    private int $authorId;
 
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\NotBlank(message: "Title is required.")]
